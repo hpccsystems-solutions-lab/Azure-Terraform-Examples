@@ -38,6 +38,12 @@ variable "subnets" {
                actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
             }
          }   
+      }
+      mysql-db = {
+         type = "mysql-db"
+         cidr = ["10.1.2.0/27"]
+         delegations = {            
+         }     
       }      
    }
 }

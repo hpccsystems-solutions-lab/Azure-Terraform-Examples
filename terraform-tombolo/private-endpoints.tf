@@ -7,6 +7,7 @@ data "azurerm_subnet" "tombolo-subnets_ids" {
   resource_group_name  = azurerm_resource_group.app-tombolo-dev-eastus2.name
 }
 
+# PE to UI App Services 
 module "tombolo_ui_private_endpoint" {  
   source              = "github.com/LexisNexis-RBA/terraform-azurerm-private-endpoint.git"
   namespace           = var.private_endpoint_namespace

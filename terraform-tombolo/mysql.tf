@@ -21,10 +21,20 @@ module "mysql" {
   administrator_password  = var.mysql-admin-pwd
 
   #service_endpoints   = {"env1" = module.virtual_network.subnet["iaas-outbound"].id}
-  access_list         = {"home" = {
+  access_list         = {"LNRS_VPN" = {
                           start_ip_address = chomp(data.http.my_ip.body), 
                           end_ip_address = chomp(data.http.my_ip.body)
                         }}
   databases           = { "tombolo" = {charset = "utf16", collation = "utf16_general_ci"} }
+
+  private_endpoints   = {
+    "tombolo-mysql" = data.azurerm_subnet.tombolo-subnets_ids["mysql-db"].id
+  }
+
+  threat_detection_policy = {
+    enable_threat_detection_policy   = true
+    threat_detection_email_addresses = ["hpcc-solutions-lab@lexisnexisrisk.com"]
+  }
+
  
 }

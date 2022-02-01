@@ -15,7 +15,7 @@ resource "azurerm_web_application_firewall_policy" "ui" {
 
       operator           = "IPMatch"
       negation_condition = true
-      match_values       = [data.http.my_ip.body]
+      match_values       = ["${chomp(data.http.my_ip.body)}/32"]
     }
 
     action = "Block"
