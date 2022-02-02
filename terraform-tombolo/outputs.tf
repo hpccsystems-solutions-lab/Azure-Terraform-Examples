@@ -18,3 +18,9 @@ output "ui_app_service_outbound_ips" {
 output "mysql_fqdn" {
   value = module.mysql.fqdn
 }
+
+output "subnets" {
+  value = {
+    subnets = module.virtual_network.subnet
+  }
+}

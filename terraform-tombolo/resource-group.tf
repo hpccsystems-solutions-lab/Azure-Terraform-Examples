@@ -1,6 +1,7 @@
-#existing resource group
-resource "azurerm_resource_group" "app-tombolo-dev-eastus2" {
-  name     = "app-tombolo-dev-eastus2"
+module "resource-group" {
+  source = "github.com/Azure-Terraform/terraform-azurerm-resource-group"
+  
+  names    = module.metadata.names
   location = module.metadata.location
   tags     = module.metadata.tags
 }

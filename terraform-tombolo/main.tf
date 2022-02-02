@@ -4,13 +4,13 @@ module "subscription" {
 }
 
 module "naming" {
-  source  = "tfe.lnrisk.io/Infrastructure/naming/azurerm"
-  version = "1.0.90"
+  source  = "github.com/LexisNexis-RBA/terraform-azurerm-naming"
+  #version = "1.0.90"
 }
 
 module "metadata"{
-  source = "tfe.lnrisk.io/Infrastructure/metadata/azurerm"  
-  version = "1.5.2"
+  source = "github.com/Azure-Terraform/terraform-azurerm-metadata?ref=v1.5.2"  
+  #version = "1.5.2"
   naming_rules = module.naming.yaml
   
   market              = var.names.market

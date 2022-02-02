@@ -1,8 +1,8 @@
 # Public Ip
 resource "azurerm_public_ip" "app_gw" {
-  name                = format("appgateway-pip-%s-%s", "tombolo", azurerm_resource_group.app-tombolo-dev-eastus2.location)
+  name                = format("appgateway-pip-%s-%s", "tombolo", module.resource-group.location)
   location            = module.metadata.location
-  resource_group_name = azurerm_resource_group.app-tombolo-dev-eastus2.name  
+  resource_group_name = module.resource-group.name  
   allocation_method   = "Static"
   sku                 = "Standard"
 
@@ -12,12 +12,12 @@ resource "azurerm_public_ip" "app_gw" {
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway
 resource "azurerm_application_gateway" "tombolo-app-gateway" {
   location            = module.metadata.location
-  resource_group_name = azurerm_resource_group.app-tombolo-dev-eastus2.name  
-  name                = format("appgw-tombolo-%s-%s", azurerm_resource_group.app-tombolo-dev-eastus2.location, var.private_endpoint_namespace)
+  resource_group_name = module.resource-group.name  
+  name                = format("appgw-tombolo-%s-%s", module.resource-group.location, var.private_endpoint_namespace)
   
   gateway_ip_configuration {
     name      = "my-gateway-ip-configuration"
-    subnet_id = data.azurerm_subnet.tombolo-subnets_ids["app-gateway"].id
+    subnet_id = module.virtual_network.subnet["app-gateway"].id
   }
 
   sku {

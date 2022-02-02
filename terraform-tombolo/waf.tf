@@ -1,5 +1,5 @@
 resource "azurerm_web_application_firewall_policy" "ui" {
-  resource_group_name = azurerm_resource_group.app-tombolo-dev-eastus2.name
+  resource_group_name = module.resource-group.name
   location            = module.metadata.location
   name                = "tombolouiwaf"
 

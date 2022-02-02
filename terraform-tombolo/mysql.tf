@@ -12,7 +12,7 @@ module "mysql" {
   source = "git@github.com:LexisNexis-RBA/terraform-azurerm-mysql-server.git"
  
   location                = module.metadata.location
-  resource_group_name     = azurerm_resource_group.app-tombolo-dev-eastus2.name
+  resource_group_name     = module.resource-group.name
   names                   = module.metadata.names
   tags                    = module.metadata.tags
  
@@ -28,7 +28,7 @@ module "mysql" {
   databases           = { "tombolo" = {charset = "utf16", collation = "utf16_general_ci"} }
 
   private_endpoints   = {
-    "tombolo-mysql" = data.azurerm_subnet.tombolo-subnets_ids["mysql-db"].id
+    "tombolo-mysql" = module.virtual_network.subnet["mysql-db"].id
   }
 
   threat_detection_policy = {

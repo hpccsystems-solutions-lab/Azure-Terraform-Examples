@@ -14,40 +14,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "subnets" {
-   type = map
-   default = {
-      app-gateway = {
-         type = "app-gateway"
-         cidr = ["10.1.1.0/26"]
-         delegations = {           
-         }     
-      }
-      app-ui = {
-         type = "app-ui"
-         cidr = ["10.1.1.128/27"]
-         delegations = {            
-         }     
-      }
-      app-api = {
-         type = "app-api"
-         cidr = ["10.1.1.160/27"]
-         delegations = {
-            "delegation" = {
-               name    = "Microsoft.Web/serverFarms"
-               actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
-            }
-         }   
-      }
-      mysql-db = {
-         type = "mysql-db"
-         cidr = ["10.1.2.0/27"]
-         delegations = {            
-         }     
-      }      
-   }
-}
-
 variable "app-ui-subnet" {
   description = "UI App service subnet id"
   type        = string

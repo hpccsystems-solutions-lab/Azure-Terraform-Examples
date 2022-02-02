@@ -2,7 +2,7 @@ module "acr" {
   source  = "git@github.com:LexisNexis-RBA/terraform-azurerm-container-registry.git"
 
   location            = module.metadata.location
-  resource_group_name = azurerm_resource_group.app-tombolo-dev-eastus2.name
+  resource_group_name = module.resource-group.name
   names               = module.metadata.names
   tags                = module.metadata.tags
 
