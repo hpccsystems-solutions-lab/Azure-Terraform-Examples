@@ -6,7 +6,7 @@ module "virtual_network" {
   names                 = module.metadata.names
   tags                  = module.metadata.tags
 
-  address_space         = ["10.1.0.0/24"]
+  address_space         = ["10.1.0.0/24"]// 10.1.0.0 - 10.1.0.255 (255 addresses total)
   
   enforce_subnet_names  = false
   
