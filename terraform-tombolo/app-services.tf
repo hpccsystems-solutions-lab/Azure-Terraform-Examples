@@ -35,8 +35,8 @@ resource "azurerm_app_service" "api" {
 
   site_config {
     linux_fx_version = "NODE|14-lts" 
-    ip_restriction = []
-    /*dynamic "ip_restriction"{
+    #ip_restriction = []
+    dynamic "ip_restriction"{
       for_each      = toset(azurerm_app_service.ui.outbound_ip_address_list)
 
       content {
@@ -45,7 +45,7 @@ resource "azurerm_app_service" "api" {
         priority    = 300
         name        = "AllowUIAppService"
       }
-    }*/
+    }
   }
 
   depends_on = [module.virtual_network]
