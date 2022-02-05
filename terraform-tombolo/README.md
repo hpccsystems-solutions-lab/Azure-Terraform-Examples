@@ -12,4 +12,10 @@ Some of the Azure services used in this example so far are:
 
 * Virtual Network
 
+* Azure Container Registry
+
+* Github runner
+
+
+
 **Please note that, this is an ongoing work and this repository will be constantly updated based on the progress**
