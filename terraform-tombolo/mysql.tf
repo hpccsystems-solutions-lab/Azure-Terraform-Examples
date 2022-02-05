@@ -28,7 +28,7 @@ module "mysql" {
   databases           = { "tombolo" = {charset = "utf16", collation = "utf16_general_ci"} }
 
   private_endpoints   = {
-    "tombolo-mysql" = module.virtual_network.subnet["mysql-db"].id
+    "tombolo-mysql" = module.virtual_network.subnet["private-endpoints"].id
   }
 
   threat_detection_policy = {

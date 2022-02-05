@@ -17,7 +17,7 @@ variable "tags" {
 variable "app-ui-subnet" {
   description = "UI App service subnet id"
   type        = string
-  default     = "app-ui"
+  default     = "private-endpoints"
 }
 
 variable "private_endpoint_namespace" {
@@ -31,4 +31,10 @@ variable "mysql-admin-pwd" {
    description = "MySQL Admin password"
    type        = string
    sensitive   = true
+}
+
+variable "runner_token" {
+  description = "github access token for self-hosted runner"
+  type        = string
+  sensitive   = true
 }

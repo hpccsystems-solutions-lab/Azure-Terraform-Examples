@@ -19,7 +19,7 @@ module "tombolo_ui_private_endpoint" {
       location            = module.metadata.location
       network = {
         vnet_id   = module.virtual_network.vnet.id
-        subnet_id = module.virtual_network.subnet["app-ui"].id
+        subnet_id = module.virtual_network.subnet["private-endpoints"].id
       }
     }
   ]

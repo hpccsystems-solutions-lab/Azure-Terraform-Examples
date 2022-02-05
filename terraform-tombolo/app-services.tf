@@ -23,7 +23,18 @@ resource "azurerm_app_service" "ui" {
     linux_fx_version = "NODE|14-lts" 
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
 }
+
+#appservice identity role for interacting with acr
+resource "azurerm_role_assignment" "ui_app_service_acr_role" {
+  role_definition_name = "AcrPull"
+  scope                = module.acr.acr_id
+  principal_id         = azurerm_app_service.ui.identity[0].principal_id
+}
+
 
 resource "azurerm_app_service" "api" {
   resource_group_name = module.resource-group.name
@@ -48,7 +59,18 @@ resource "azurerm_app_service" "api" {
     }
   }
 
+  identity {
+    type = "SystemAssigned"
+  }  
+
   depends_on = [module.virtual_network]
+}
+
+#appservice identity role for interacting with acr
+resource "azurerm_role_assignment" "api_app_service_acr_role" {
+  role_definition_name = "AcrPull"
+  scope                = module.acr.acr_id
+  principal_id         = azurerm_app_service.api.identity[0].principal_id
 }
 
 resource "azurerm_app_service_virtual_network_swift_connection" "api" {

@@ -35,16 +35,6 @@ module "virtual_network" {
       cidrs = ["10.1.0.0/27"]//10.1.0.0 - 10.1.0.31  (32 addresses. With 5 reserved for Azure)
       create_network_security_group = false
     }
-    
-    //UI Code Subnet. The SPA is only accesable via the VNet and App Gateway
-    app-ui = {
-      cidrs = ["10.1.0.32/27"]//10.1.0.32 - 10.1.0.63  (32 addresses. With 5 reserved for Azure)
-      enforce_private_link_endpoint_network_policies  = true
-      enforce_private_link_service_network_policies   = true
-      create_network_security_group = false
-    }
-
-    //API Subnet with VNet integration for App Services PaaS 
     app-api = {
       cidrs = ["10.1.0.64/27"]//10.1.0.64 - 10.1.0.95 (32 addresses. With 5 reserved for Azure)
       delegations = {
@@ -54,13 +44,17 @@ module "virtual_network" {
         }
       }   
     }
-
-    //Subnet reserved for Private Endpoints
-    mysql-db = {
-      cidrs = ["10.1.0.96/27"]//10.1.0.96 - 10.1.0.127 (32 addresses. With 5 reserved for Azure)
+    github-runner = {
+      cidrs = ["10.1.0.128/27"]
+      create_network_security_group = false
+      service_endpoints = ["Microsoft.Storage"]
+    }
+    private-endpoints = {
+      cidrs = ["10.1.0.192/26"]
       enforce_private_link_endpoint_network_policies  = true
       enforce_private_link_service_network_policies   = true
-    }      
+      create_network_security_group = false
+    }
   }      
 }
 
