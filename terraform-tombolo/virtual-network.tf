@@ -35,6 +35,8 @@ module "virtual_network" {
       cidrs = ["10.1.0.0/27"]//10.1.0.0 - 10.1.0.31  (32 addresses. With 5 reserved for Azure)
       create_network_security_group = false
     }
+    
+    //Subnet for API App Services VNet Integration. VNet integration protects outgoing traffic
     app-api = {
       cidrs = ["10.1.0.64/27"]//10.1.0.64 - 10.1.0.95 (32 addresses. With 5 reserved for Azure)
       delegations = {
@@ -44,11 +46,15 @@ module "virtual_network" {
         }
       }   
     }
+    
+    //Subnet for Gitrunner VM
     github-runner = {
       cidrs = ["10.1.0.128/27"]
       create_network_security_group = false
-      service_endpoints = ["Microsoft.Storage"]
+      service_endpoints = ["Microsoft.Storage"]//Service Enpoints are required for Gitrunner VM
     }
+
+    //Private endpoints for DB, API and UI. Protects incoming traffic
     private-endpoints = {
       cidrs = ["10.1.0.192/26"]
       enforce_private_link_endpoint_network_policies  = true
