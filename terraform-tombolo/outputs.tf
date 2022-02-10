@@ -24,3 +24,7 @@ output "subnets" {
     subnets = module.virtual_network.subnet
   }
 }
+
+output "acr_login_server" {
+  value = module.acr.login_server
+}

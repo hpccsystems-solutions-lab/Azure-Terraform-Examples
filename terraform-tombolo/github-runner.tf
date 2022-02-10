@@ -23,9 +23,43 @@ module "runner" {
   runner_labels = ["azure", "dev"]
 }
 
-## grant runner mi owner rights to sub
-/*resource "azurerm_role_assignment" "sub" {
-  scope                = data.azurerm_subscription.current.subscription_id
+## grant acr push role to vm
+resource "azurerm_role_assignment" "acrpush" {
+  scope                = module.resource-group.id
+  role_definition_name = "AcrPush"
+  principal_id         = module.runner.principal_id
+
+  depends_on = [module.runner]
+}
+
+/*resource "azurerm_role_assignment" "acrpull" {
+  scope                = module.resource-group.id
+  role_definition_name = "AcrPull"
+  principal_id         = module.runner.principal_id
+
+  depends_on = [module.runner]
+}*/
+
+## grant Reader role to vm
+/*resource "azurerm_role_assignment" "rgreader" {
+  scope                = module.resource-group.id
+  role_definition_name = "Reader"
+  principal_id         = module.runner.principal_id
+
+  depends_on = [module.runner]
+}*/
+
+## grant Website Contributor role to vm
+resource "azurerm_role_assignment" "rgwebsitecontributor" {
+  scope                = module.resource-group.id
+  role_definition_name = "Website Contributor"
+  principal_id         = module.runner.principal_id
+
+  depends_on = [module.runner]
+}
+
+/*resource "azurerm_role_assignment" "rgcontributor" {
+  scope                = module.resource-group.id
   role_definition_name = "Contributor"
   principal_id         = module.runner.principal_id
 

@@ -8,11 +8,13 @@ module "acr" {
 
   sku = "Premium"
 
-  admin_enabled    = true
+  admin_enabled       = true
 
-  access_list = {
+  disable_unique_suffix = true
+
+  /*access_list = {
     "my_ip" = "${chomp(data.http.my_ip.body)}/32"
-  }
+  }*/
 
   /*service_endpoints = {
     "iaas-outbound" = module.virtual_network.subnet["iaas-outbound"].id

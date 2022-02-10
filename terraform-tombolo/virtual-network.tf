@@ -90,7 +90,7 @@ resource "azurerm_network_security_rule" "lnrsvpnallowhttpaccess" {
 
 /* Security rule for app-gateway-nsg to allow http access to the Gateway subnet for Gateway health check */
 
-resource "azurerm_network_security_rule" "allowgatewaymanager" {
+/*resource "azurerm_network_security_rule" "allowgatewaymanager" {
   name                        = "AllowGatewayManagerAccess"
   priority                    = 110
   direction                   = "Inbound"
@@ -102,7 +102,7 @@ resource "azurerm_network_security_rule" "allowgatewaymanager" {
   destination_address_prefix  = "*"
   resource_group_name         = module.resource-group.name
   network_security_group_name = azurerm_network_security_group.app-gateway-nsg.name
-}
+}*/
 
 /* Associate the NSG to the Gateway Subnet */
 resource "azurerm_subnet_network_security_group_association" "app-gateway-subnet-nsg" {
