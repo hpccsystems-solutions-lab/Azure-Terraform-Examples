@@ -29,7 +29,13 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
   backend_address_pool    {
     name                  = local.app_gateway_backend_address_pool_name
     ip_addresses          = null
-    fqdns                 = [azurerm_app_service.ui.default_site_hostname]    
+    fqdns                 = [azurerm_app_service.ui2.default_site_hostname]    
+  }
+
+  backend_address_pool    {
+    name                  = local.app_gateway_api_backend_address_pool_name
+    ip_addresses          = null
+    fqdns                 = [azurerm_app_service.api.default_site_hostname]    
   }
 
   backend_http_settings   {  
@@ -40,6 +46,17 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     port                  = 80
     protocol              = "http"
     request_timeout       = 20
+  }
+
+  backend_http_settings   {  
+    name                  = local.app_gateway_api_http_setting_name
+    path                  = ""
+    cookie_based_affinity = "Disabled"
+    pick_host_name_from_backend_address = true
+    port                  = 80
+    protocol              = "http"
+    request_timeout       = 20
+    probe_name            = local.api_probe_name
   }
 
   frontend_ip_configuration {
@@ -58,6 +75,16 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     frontend_port_name             = local.app_gateway_frontend_port_name
     protocol                       = "Http"
     ssl_certificate_name           = ""
+    host_name                      = "tombolo.us-hpccsystems-dev.azure.lnrsg.io"
+  }
+
+  http_listener {
+    name                           = local.app_gateway_api_http_listener_name
+    frontend_ip_configuration_name = local.app_gateway_frontend_ip_configuration_name
+    frontend_port_name             = local.app_gateway_frontend_port_name
+    protocol                       = "Http"
+    ssl_certificate_name           = ""
+    host_name                      = "tombolo-api.us-hpccsystems-dev.azure.lnrsg.io"
   }
 
   request_routing_rule {
@@ -66,6 +93,14 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     http_listener_name         = local.app_gateway_http_listener_name
     backend_address_pool_name  = local.app_gateway_backend_address_pool_name
     backend_http_settings_name = local.app_gateway_http_setting_name
+  }
+
+  request_routing_rule {
+    name                       = local.app_gateway_api_request_routing_rule_name
+    rule_type                  = "Basic"
+    http_listener_name         = local.app_gateway_api_http_listener_name
+    backend_address_pool_name  = local.app_gateway_api_backend_address_pool_name
+    backend_http_settings_name = local.app_gateway_api_http_setting_name
   }
 
   ssl_policy {
@@ -79,6 +114,17 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
   }  
 
   firewall_policy_id = azurerm_web_application_firewall_policy.ui.id
+
+  #custom probe for backend api health check
+  probe {
+    name                                      = local.api_probe_name
+    protocol                                  = "Http"
+    timeout                                   = 30
+    interval                                  = 30 
+    path                                      = "/api/user"
+    pick_host_name_from_backend_http_settings = true
+    unhealthy_threshold                       = 3
+  }
   
-  depends_on = [azurerm_app_service.ui]
+  depends_on = [azurerm_app_service.ui2, azurerm_app_service.api]
 }

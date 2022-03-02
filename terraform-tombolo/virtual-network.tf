@@ -39,6 +39,7 @@ module "virtual_network" {
     //Subnet for API App Services VNet Integration. VNet integration protects outgoing traffic
     app-api = {
       cidrs = ["10.1.0.64/27"]//10.1.0.64 - 10.1.0.95 (32 addresses. With 5 reserved for Azure)
+      create_network_security_group = false
       delegations = {
         "delegation" = {
           name    = "Microsoft.Web/serverFarms"

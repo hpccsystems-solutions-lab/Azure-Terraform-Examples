@@ -16,6 +16,9 @@ Some of the Azure services used in this example so far are:
 
 * Github runner
 
+## Highlevel architecture diagram
+
+![Alt text](https://raw.githubusercontent.com/alfjjacob/gatsby-site/e6b1fba3c25c46258d3e4151f656e43e4848dc61/Azure-PaaS.PNG)
 
 
 **Please note that, this is an ongoing work and this repository will be constantly updated based on the progress**

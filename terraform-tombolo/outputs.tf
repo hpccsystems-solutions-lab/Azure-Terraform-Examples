@@ -19,6 +19,10 @@ output "mysql_fqdn" {
   value = module.mysql.fqdn
 }
 
+output "mysql_id" {
+  value = module.mysql.id
+}
+
 output "subnets" {
   value = {
     subnets = module.virtual_network.subnet

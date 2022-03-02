@@ -22,7 +22,9 @@ resource "azurerm_app_service" "ui" {
   site_config {
     #linux_fx_version = "NODE|14-lts" 
     linux_fx_version    = "DOCKER|${chomp(module.acr.login_server)}/tombolo-ui"
+    #linux-fx-version =  "COMPOSE|${filebase64("./docker-compose.yml")}"
     acr_use_managed_identity_credentials  = true
+    #app_command_line =  "pm2 serve /home/site/wwwroot --no-daemon --spa"
   }
 
   app_settings = {
@@ -54,28 +56,48 @@ resource "azurerm_app_service" "api" {
   
   app_service_plan_id = azurerm_app_service_plan.tombolo.id  
   name        = format("tomboloapi-%s-%s", module.resource-group.location, var.private_endpoint_namespace)
-  https_only  = true
+  #https_only  = true
 
   site_config {
-    linux_fx_version = "NODE|14-lts"     
+    linux_fx_version = "NODE|14-lts"
+    #linux_fx_version    = "DOCKER|${chomp(module.acr.login_server)}/tombolo-api"
+    acr_use_managed_identity_credentials  = true
     #ip_restriction = []
-    dynamic "ip_restriction"{
-      for_each      = toset(azurerm_app_service.ui.outbound_ip_address_list)
-
-      content {
-        ip_address  = "${chomp(ip_restriction.value)}/32"
-        action      = "Allow"
-        priority    = 300
-        name        = "AllowUIAppService"
-      }
-    }
   }
+
+  app_settings = {
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"  =  "false"
+    "acrUseManagedIdentityCreds"      =  "true"
+    "WEBSITE_PULL_IMAGE_OVER_VNET"    = "true"
+    "DOCKER_REGISTRY_SERVER_URL"      = "${chomp(module.acr.login_server)}"
+  }
+
 
   identity {
     type = "SystemAssigned"
   }  
 
   depends_on = [module.virtual_network]
+}
+
+resource "azurerm_app_service" "ui2" {
+  resource_group_name = module.resource-group.name
+  location = module.resource-group.location
+  
+  app_service_plan_id = azurerm_app_service_plan.tombolo.id  
+  name        = format("tomboloui2-%s-%s", module.resource-group.location, var.private_endpoint_namespace)
+  #https_only  = true
+
+  site_config {
+    linux_fx_version = "NODE|14-lts" 
+    #linux-fx-version =  "COMPOSE|${filebase64("./docker-compose.yml")}"
+    #acr_use_managed_identity_credentials  = true
+    app_command_line =  "pm2 serve /home/site/wwwroot --no-daemon --spa"
+  }
+
+  app_settings = {
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"  =  "false"
+  }
 }
 
 #appservice identity role for interacting with acr
