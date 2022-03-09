@@ -11,7 +11,7 @@ resource "azurerm_app_service_plan" "tombolo" {
   }
 }
 
-resource "azurerm_app_service" "ui" {
+/*resource "azurerm_app_service" "ui" {
   resource_group_name = module.resource-group.name
   location = module.resource-group.location
   
@@ -22,7 +22,7 @@ resource "azurerm_app_service" "ui" {
   site_config {
     #linux_fx_version = "NODE|14-lts" 
     linux_fx_version    = "DOCKER|${chomp(module.acr.login_server)}/tombolo-ui"
-    #linux-fx-version =  "COMPOSE|${filebase64("./docker-compose.yml")}"
+    #linux_fx_version =  "COMPOSE|${filebase64("./docker-compose.yml")}"
     acr_use_managed_identity_credentials  = true
     #app_command_line =  "pm2 serve /home/site/wwwroot --no-daemon --spa"
   }
@@ -47,7 +47,7 @@ resource "azurerm_role_assignment" "ui_app_service_acr_role" {
   role_definition_name = "AcrPull"
   scope                = module.acr.acr_id
   principal_id         = azurerm_app_service.ui.identity[0].principal_id
-}
+}*/
 
 
 resource "azurerm_app_service" "api" {
@@ -100,12 +100,49 @@ resource "azurerm_app_service" "ui2" {
   }
 }
 
+/*resource "azurerm_app_service" "api_container_based" {
+  resource_group_name = module.resource-group.name
+  location = module.resource-group.location
+  
+  app_service_plan_id = azurerm_app_service_plan.tombolo.id  
+  name        = format("tomboloapicontainer-%s-%s", module.resource-group.location, var.private_endpoint_namespace)
+  #https_only  = true
+
+  site_config {
+    #linux_fx_version = "NODE|14-lts" 
+    linux_fx_version    = "DOCKER|${chomp(module.acr.login_server)}/tombolo-api"
+    #linux_fx_version =  "COMPOSE|${filebase64("./docker-compose.yml")}"
+    acr_use_managed_identity_credentials  = true
+    #app_command_line =  "pm2 serve /home/site/wwwroot --no-daemon --spa"
+  }
+
+  app_settings = {
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"  =  "false"
+    "acrUseManagedIdentityCreds"      =  "true"
+    "WEBSITE_PULL_IMAGE_OVER_VNET"    = "true"
+    "DOCKER_REGISTRY_SERVER_URL"      = "${chomp(module.acr.login_server)}"
+
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  depends_on = [module.acr]
+}*/
+
 #appservice identity role for interacting with acr
 resource "azurerm_role_assignment" "api_app_service_acr_role" {
   role_definition_name = "AcrPull"
   scope                = module.acr.acr_id
   principal_id         = azurerm_app_service.api.identity[0].principal_id
 }
+
+/*resource "azurerm_role_assignment" "apicontainer_app_service_acr_role" {
+  role_definition_name = "AcrPull"
+  scope                = module.acr.acr_id
+  principal_id         = azurerm_app_service.api_container_based.identity[0].principal_id
+}*/
 
 resource "azurerm_app_service_virtual_network_swift_connection" "api" {
   app_service_id = azurerm_app_service.api.id

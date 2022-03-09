@@ -101,6 +101,7 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     http_listener_name         = local.app_gateway_api_http_listener_name
     backend_address_pool_name  = local.app_gateway_api_backend_address_pool_name
     backend_http_settings_name = local.app_gateway_api_http_setting_name
+    rewrite_rule_set_name      = local.rewrite_rule_set_name
   }
 
   ssl_policy {
@@ -124,6 +125,18 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     path                                      = "/api/user"
     pick_host_name_from_backend_http_settings = true
     unhealthy_threshold                       = 3
+  }
+
+  rewrite_rule_set {
+    name = local.rewrite_rule_set_name
+    rewrite_rule  {
+      name = "Enable CORS"
+      rule_sequence = 100
+      response_header_configuration {
+        header_name   = "Access-Control-Allow-Origin"
+        header_value  = "*"
+      }
+    }
   }
   
   depends_on = [azurerm_app_service.ui2, azurerm_app_service.api]

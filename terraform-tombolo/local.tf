@@ -11,4 +11,5 @@ locals {
   app_gateway_api_request_routing_rule_name         = "tombolo-api-request-routing-rule-name"
   api_probe_name                                    = "tombolo-api-health-probe"
   tombolo_mysql_db_name                             = "tombolo-dev-01"
+  rewrite_rule_set_name                             = "tombolo-api-response-rewrite-rule"
 }

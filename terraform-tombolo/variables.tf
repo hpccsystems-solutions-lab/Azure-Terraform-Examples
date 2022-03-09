@@ -38,3 +38,9 @@ variable "runner_token" {
   type        = string
   sensitive   = true
 }
+
+variable "tombolo_runner_token" {
+  description = "github access token for self-hosted runner"
+  type        = string
+  sensitive   = true
+}
