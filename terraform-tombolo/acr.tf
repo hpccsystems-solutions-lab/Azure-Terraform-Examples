@@ -1,4 +1,5 @@
-module "acr" {
+#acr is not currently used in this app. it uses scm deployment from github actions
+/*module "acr" {
   source  = "git@github.com:LexisNexis-RBA/terraform-azurerm-container-registry.git"
 
   location            = module.metadata.location
@@ -11,12 +12,4 @@ module "acr" {
   admin_enabled       = true
 
   disable_unique_suffix = true
-
-  /*access_list = {
-    "my_ip" = "${chomp(data.http.my_ip.body)}/32"
-  }*/
-
-  /*service_endpoints = {
-    "iaas-outbound" = module.virtual_network.subnet["iaas-outbound"].id
-  }*/
-}
+}*/

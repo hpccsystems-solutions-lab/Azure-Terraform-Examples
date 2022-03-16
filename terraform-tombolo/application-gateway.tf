@@ -1,11 +1,10 @@
-# Public Ip
+# Public Ip for the app gateway
 resource "azurerm_public_ip" "app_gw" {
   name                = format("appgateway-pip-%s-%s", "tombolo", module.resource-group.location)
   location            = module.metadata.location
   resource_group_name = module.resource-group.name  
   allocation_method   = "Static"
   sku                 = "Standard"
-
   tags                = module.metadata.tags  
 }
 
@@ -29,12 +28,16 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
   backend_address_pool    {
     name                  = local.app_gateway_backend_address_pool_name
     ip_addresses          = null
+    #fqdn of the backend app service - Azure automatically identifies the PE for the app service if it exists and resolves to the internal ip
+    #an nslookup can confirm this
     fqdns                 = [azurerm_app_service.ui2.default_site_hostname]    
   }
 
   backend_address_pool    {
     name                  = local.app_gateway_api_backend_address_pool_name
     ip_addresses          = null
+    #fqdn of the backend app service - Azure automatically identifies the PE for the app service if it exists and resolves to the internal ip
+    #an nslookup can confirm this
     fqdns                 = [azurerm_app_service.api.default_site_hostname]    
   }
 
@@ -75,6 +78,7 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     frontend_port_name             = local.app_gateway_frontend_port_name
     protocol                       = "Http"
     ssl_certificate_name           = ""
+    #for public dns name resolution
     host_name                      = "tombolo.us-hpccsystems-dev.azure.lnrsg.io"
   }
 
@@ -84,9 +88,10 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     frontend_port_name             = local.app_gateway_frontend_port_name
     protocol                       = "Http"
     ssl_certificate_name           = ""
+    #for public dns name resolution
     host_name                      = "tombolo-api.us-hpccsystems-dev.azure.lnrsg.io"
   }
-
+  #routing rule to the backend pool
   request_routing_rule {
     name                       = local.app_gateway_request_routing_rule_name
     rule_type                  = "Basic"
@@ -94,7 +99,7 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     backend_address_pool_name  = local.app_gateway_backend_address_pool_name
     backend_http_settings_name = local.app_gateway_http_setting_name
   }
-
+  #routing rule to the backend pool
   request_routing_rule {
     name                       = local.app_gateway_api_request_routing_rule_name
     rule_type                  = "Basic"
@@ -113,10 +118,10 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     ]
     min_protocol_version = "TLSv1_2"
   }  
-
+  #associate the custom waf rule to the app gateway - this is mainly for IP restrictions
   firewall_policy_id = azurerm_web_application_firewall_policy.ui.id
 
-  #custom probe for backend api health check
+  #custom probe for backend api health check - this is required for the app gateway routing to be working. 
   probe {
     name                                      = local.api_probe_name
     protocol                                  = "Http"
@@ -126,7 +131,7 @@ resource "azurerm_application_gateway" "tombolo-app-gateway" {
     pick_host_name_from_backend_http_settings = true
     unhealthy_threshold                       = 3
   }
-
+  #For some reason CORS had to be enabled at the app gateway level in addition to the application level as some API calls were failing
   rewrite_rule_set {
     name = local.rewrite_rule_set_name
     rewrite_rule  {

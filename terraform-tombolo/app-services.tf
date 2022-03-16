@@ -11,67 +11,26 @@ resource "azurerm_app_service_plan" "tombolo" {
   }
 }
 
-/*resource "azurerm_app_service" "ui" {
-  resource_group_name = module.resource-group.name
-  location = module.resource-group.location
-  
-  app_service_plan_id = azurerm_app_service_plan.tombolo.id  
-  name        = format("tomboloui-%s-%s", module.resource-group.location, var.private_endpoint_namespace)
-  #https_only  = true
-
-  site_config {
-    #linux_fx_version = "NODE|14-lts" 
-    linux_fx_version    = "DOCKER|${chomp(module.acr.login_server)}/tombolo-ui"
-    #linux_fx_version =  "COMPOSE|${filebase64("./docker-compose.yml")}"
-    acr_use_managed_identity_credentials  = true
-    #app_command_line =  "pm2 serve /home/site/wwwroot --no-daemon --spa"
-  }
-
-  app_settings = {
-    "SCM_DO_BUILD_DURING_DEPLOYMENT"  =  "false"
-    "acrUseManagedIdentityCreds"      =  "true"
-    "WEBSITE_PULL_IMAGE_OVER_VNET"    = "true"
-    "DOCKER_REGISTRY_SERVER_URL"      = "${chomp(module.acr.login_server)}"
-
-  }
-
-  identity {
-    type = "SystemAssigned"
-  }
-
-  depends_on = [module.acr]
-}
-
-#appservice identity role for interacting with acr
-resource "azurerm_role_assignment" "ui_app_service_acr_role" {
-  role_definition_name = "AcrPull"
-  scope                = module.acr.acr_id
-  principal_id         = azurerm_app_service.ui.identity[0].principal_id
-}*/
-
-
 resource "azurerm_app_service" "api" {
   resource_group_name = module.resource-group.name
   location = module.resource-group.location
   
   app_service_plan_id = azurerm_app_service_plan.tombolo.id  
   name        = format("tomboloapi-%s-%s", module.resource-group.location, var.private_endpoint_namespace)
+  #TO:DO make https work all the way from app gateway to app services
   #https_only  = true
 
   site_config {
     linux_fx_version = "NODE|14-lts"
-    #linux_fx_version    = "DOCKER|${chomp(module.acr.login_server)}/tombolo-api"
-    acr_use_managed_identity_credentials  = true
-    #ip_restriction = []
+    #acr_use_managed_identity_credentials  = true
   }
 
   app_settings = {
     "SCM_DO_BUILD_DURING_DEPLOYMENT"  =  "false"
-    "acrUseManagedIdentityCreds"      =  "true"
-    "WEBSITE_PULL_IMAGE_OVER_VNET"    = "true"
-    "DOCKER_REGISTRY_SERVER_URL"      = "${chomp(module.acr.login_server)}"
+    #"acrUseManagedIdentityCreds"      =  "true"
+    #"WEBSITE_PULL_IMAGE_OVER_VNET"    = "true"
+    #"DOCKER_REGISTRY_SERVER_URL"      = "${chomp(module.acr.login_server)}"
   }
-
 
   identity {
     type = "SystemAssigned"
@@ -86,6 +45,7 @@ resource "azurerm_app_service" "ui2" {
   
   app_service_plan_id = azurerm_app_service_plan.tombolo.id  
   name        = format("tomboloui2-%s-%s", module.resource-group.location, var.private_endpoint_namespace)
+  #TO:DO make https work all the way from app gateway to app services
   #https_only  = true
 
   site_config {
@@ -132,11 +92,11 @@ resource "azurerm_app_service" "ui2" {
 }*/
 
 #appservice identity role for interacting with acr
-resource "azurerm_role_assignment" "api_app_service_acr_role" {
+/*resource "azurerm_role_assignment" "api_app_service_acr_role" {
   role_definition_name = "AcrPull"
   scope                = module.acr.acr_id
   principal_id         = azurerm_app_service.api.identity[0].principal_id
-}
+}*/
 
 /*resource "azurerm_role_assignment" "apicontainer_app_service_acr_role" {
   role_definition_name = "AcrPull"

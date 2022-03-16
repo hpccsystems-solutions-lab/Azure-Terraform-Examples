@@ -1,3 +1,4 @@
+#custom waf rule to allow access only from LNRS VPN
 resource "azurerm_web_application_firewall_policy" "ui" {
   resource_group_name = module.resource-group.name
   location            = module.metadata.location
@@ -20,7 +21,7 @@ resource "azurerm_web_application_firewall_policy" "ui" {
 
     action = "Block"
   }
-
+  #managed rule - please note that enabling this rule was a bit restrictive for a ReactJS/ExpressJS app
   managed_rules {    
     managed_rule_set {
       type    = "OWASP"

@@ -17,7 +17,10 @@ module "tombolo_runner" {
   ## gen repo runner token https://github.community/t/api-to-generate-runners-token/16963
   github_runner_token = var.tombolo_runner_token
 
+  #enable boot_diagnostics to access Serial console to troubleshoot issues with runner
   enable_boot_diagnostics     = false
+  #this should be set to false as serial console does not work with managed storage account
+  #there are improvements made to the runner module recently to provide our own storage to the runner. please refer to the module documentation
   use_managed_storage_account = false
 
   runner_labels = ["azure", "dev"]
@@ -32,24 +35,7 @@ resource "azurerm_role_assignment" "tombolo_acrpush" {
   depends_on = [module.tombolo_runner]
 }
 
-/*resource "azurerm_role_assignment" "acrpull" {
-  scope                = module.resource-group.id
-  role_definition_name = "AcrPull"
-  principal_id         = module.tombolo_runner.principal_id
-
-  depends_on = [module.tombolo_runner]
-}*/
-
-## grant Reader role to vm
-/*resource "azurerm_role_assignment" "rgreader" {
-  scope                = module.resource-group.id
-  role_definition_name = "Reader"
-  principal_id         = module.tombolo_runner.principal_id
-
-  depends_on = [module.tombolo_runner]
-}*/
-
-## grant Website Contributor role to vm
+## grant Website Contributor role to vm - this is required for the ci/cd deployment
 resource "azurerm_role_assignment" "tombolo_rgwebsitecontributor" {
   scope                = module.resource-group.id
   role_definition_name = "Website Contributor"
@@ -57,11 +43,3 @@ resource "azurerm_role_assignment" "tombolo_rgwebsitecontributor" {
 
   depends_on = [module.tombolo_runner]
 }
-
-/*resource "azurerm_role_assignment" "rgcontributor" {
-  scope                = module.resource-group.id
-  role_definition_name = "Contributor"
-  principal_id         = module.tombolo_runner.principal_id
-
-  depends_on = [module.tombolo_runner]
-}*/
